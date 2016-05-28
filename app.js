@@ -10,6 +10,7 @@ app.use(express.static(__dirname + '/client'));
 
 // set the home page route
 app.get('/', function(req, res) {
+	res.send({ success: true, data: "Hello world" });
 });
 
 app.listen(port, function() {
