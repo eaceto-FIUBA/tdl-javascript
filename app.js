@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
 
 // set the port of our application
 var port = process.env.PORT || 8080;
@@ -19,7 +18,7 @@ app.get('/', function(req, res) {
 
 app.put('/api/user/:username/join/:socket', function(req, res) {
     var username = req.params.username;
-    var socket = req.params.socket;
+    var socketid = req.params.socket;
     if (username in users) {
         var e = {"error": "El usuario '" + username + "' ya existe en la sala."};
         res.json(e);
@@ -27,20 +26,25 @@ app.put('/api/user/:username/join/:socket', function(req, res) {
         return;
     }
     console.log("[JOIN]\t" + username);
-    var e = {"username": username, "socket": socket};
-    users[username] = socket;
-    sockets[socket] = username;
+    var e = {"username": username, "socket": socketid};
+    users[username] = "#" + socketid;
     res.json(e);
     res.status(201);
 });
 
-app.delete('/api/user/:username/leave', function(req, res) {
+app.delete('/api/user/:username/exit', function(req, res) {
     var username = req.params.username;
     if (username in users) {
         console.log("[LEAVE]\t" + username);
-        var socket = users[username];
+        var socketid = users[username];
         delete users[username];
-        delete sockets[socket];
+
+        var socket = sockets[socketid];
+        console.log("will close socket id: " + socketid);
+        if (socket != undefined) {
+            socket.disconnect();
+        }
+        delete sockets[socketid];
         res.status(200);
         res.end();
         return;
@@ -48,12 +52,14 @@ app.delete('/api/user/:username/leave', function(req, res) {
     res.status(404);
 });
 
+var io = require('socket.io').listen(app.listen(port, function() {
+        console.log('Server running on http://localhost:' + port);
+    })
+);
+
 io.on('connection', function(socket) {
-    console.log('a user connected');
-});
-
-
-app.listen(port, function() {
-    console.log('Server running on http://localhost:' + port);
+    var sid = socket.id.replace("/","");
+    console.log('a user is connected to Socket.io. ' + sid);
+    sockets[sid] = socket;
 });
 

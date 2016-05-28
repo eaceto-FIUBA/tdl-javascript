@@ -17,7 +17,7 @@ Si el usuario no pudo ser creado devuelve
 
 ### Borra a un usuario de la sala de chat
 
-    DELETE      /api/user/:username/leave
+    DELETE      /api/user/:username/exit
 
 Si el usuario pudo ser borrado devuelve
 

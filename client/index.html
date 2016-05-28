@@ -4,8 +4,54 @@
     <meta charset="UTF-8">
     <title>TDL Chat</title>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 </head>
 <body>
+    <script>
+        var joinChat = function (username) {
+            var socket = io();
+            socket.on('connect', function(){
+                var socketId = socket.io.engine.id;
+                console.log('connected username: ' + username + ' socketId: ' + socketId);
+                // call "join" endpoint
+                $.ajax({
+                    url: '/api/user/' + username + '/join/' + socketId,
+                    type: 'PUT',
+                    dataType: "json",
+                    success: function(data) {
+                        if (data && data.username && data.socket) {
+                            console.log('joined chat');
+                        } else {
+                            console.log('error joining chat');
+                        }
+                    },
+                    fail: function() {
+                        console.log('error joining chat');
+                    }
+                });
+            });
 
+            socket.on('disconnect', function() {
+                var socketId = socket.io.engine.id;
+                console.log('disconnected username: ' + username + ' socketId: ' + socketId);
+            });
+        };
+
+        var exitChat = function (username) {
+            // call "exit" endpoint
+            console.log('disconnecting username: ' + username);
+            $.ajax({
+                url: '/api/user/' + username + '/exit',
+                type: 'DELETE',
+                dataType: "json",
+                success: function(data) {
+                    console.log('left chat');
+                },
+                fail: function() {
+                    console.log('error leaving chat');
+                }
+            });
+        };
+    </script>
 </body>
 </html>
