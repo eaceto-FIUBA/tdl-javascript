@@ -18,7 +18,7 @@ app.get('/', function(req, res) {
 
 app.put('/api/user/:username/join/:socket', function(req, res) {
     var username = req.params.username;
-    var socketid = req.params.socket;
+    var socketid = "#" + req.params.socket;
     if (username in users) {
         var e = {"error": "El usuario '" + username + "' ya existe en la sala."};
         res.json(e);
@@ -27,7 +27,13 @@ app.put('/api/user/:username/join/:socket', function(req, res) {
     }
     console.log("[JOIN]\t" + username);
     var e = {"username": username, "socket": socketid};
-    users[username] = "#" + socketid;
+    users[username] = socketid;
+
+    var socket = sockets[socketid];
+    if (socket) {
+        socket.to('others').emit('message', {username: username, message: "<Ingreso al chat>"});
+    }
+
     res.json(e);
     res.status(201);
 });
@@ -40,7 +46,7 @@ app.delete('/api/user/:username/exit', function(req, res) {
         delete users[username];
 
         var socket = sockets[socketid];
-        console.log("will close socket id: " + socketid);
+        console.log("will close socket: " + socketid);
         if (socket != undefined) {
             socket.disconnect();
         }
@@ -59,7 +65,13 @@ var io = require('socket.io').listen(app.listen(port, function() {
 
 io.on('connection', function(socket) {
     var sid = socket.id.replace("/","");
-    console.log('a user is connected to Socket.io. ' + sid);
     sockets[sid] = socket;
+    socket.on('chat', function(msg) {
+        var username = msg.username;
+        var message = msg.message;
+
+        console.log("[CHAT]\tfrom: '" + username + "' - message: '" + message + "'");
+        socket.to('others').emit('chat', {username: username, message: message});
+    });
 });
 

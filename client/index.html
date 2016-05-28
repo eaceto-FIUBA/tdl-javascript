@@ -8,10 +8,15 @@
 </head>
 <body>
     <script>
+        var currentSocket = undefined;
+
         var joinChat = function (username) {
-            var socket = io();
-            socket.on('connect', function(){
-                var socketId = socket.io.engine.id;
+            var tmpSocket = io();
+
+            tmpSocket.on('connect', function(){
+                currentSocket = tmpSocket;
+
+                var socketId = tmpSocket.io.engine.id;
                 console.log('connected username: ' + username + ' socketId: ' + socketId);
                 // call "join" endpoint
                 $.ajax({
@@ -31,9 +36,11 @@
                 });
             });
 
-            socket.on('disconnect', function() {
+            tmpSocket.on('disconnect', function() {
                 var socketId = socket.io.engine.id;
                 console.log('disconnected username: ' + username + ' socketId: ' + socketId);
+                tmpSocket = undefined;
+                currentSocket = undefined;
             });
         };
 
@@ -51,6 +58,18 @@
                     console.log('error leaving chat');
                 }
             });
+        };
+
+        var sendMessage = function (soc, username, message) {
+            if (soc) {
+                soc.emit('chat', {
+                    "username": username,
+                    "socketid": soc.io.engine.id,
+                    "message": message
+                });
+            } else {
+                console.log("error sending message to undefined socket");
+            }
         };
     </script>
 </body>
