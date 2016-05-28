@@ -16,11 +16,27 @@ app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/client/index.html'));
 });
 
+app.put('/api/user/:username/login', function(req, res) {
+    var username = req.params.username;
+    if (username in users) {
+        var e = {"loggedin": false};
+        res.json(e);
+        res.status(409);
+        return;
+    }
+    console.log("[LOGIN]\t" + username);
+    var e = {"loggedin": true};
+    users[username] = "";
+
+    res.json(e);
+    res.status(201);
+});
+
 app.put('/api/user/:username/join/:socket', function(req, res) {
     var username = req.params.username;
     var socketid = "#" + req.params.socket;
-    if (username in users) {
-        var e = {"error": "El usuario '" + username + "' ya existe en la sala."};
+    if (!(username in users)) {
+        var e = {"error": "El usuario '" + username + "' no ha iniciado sesión."};
         res.json(e);
         res.status(409);
         return;
@@ -31,7 +47,9 @@ app.put('/api/user/:username/join/:socket', function(req, res) {
 
     var socket = sockets[socketid];
     if (socket) {
-        socket.to('others').emit('message', {username: username, message: "<Ingreso al chat>"});
+        socket.to('others').emit('chat', {  username: username,
+                                            message: "<Ingresó al chat>",
+                                            timestamp: Date.now()});
     }
 
     res.json(e);
@@ -71,7 +89,7 @@ io.on('connection', function(socket) {
         var message = msg.message;
 
         console.log("[CHAT]\tfrom: '" + username + "' - message: '" + message + "'");
-        socket.to('others').emit('chat', {username: username, message: message});
+        socket.to('others').emit('chat', {username: username, message: message, timestamp: Date.now()});
     });
 });
 

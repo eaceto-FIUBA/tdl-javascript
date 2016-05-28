@@ -10,6 +10,27 @@
     <script>
         var currentSocket = undefined;
 
+        var login = function (username, callback) {
+            $.ajax({
+                url: '/api/user/' + username + '/login',
+                type: 'PUT',
+                dataType: "json",
+                success: function(data) {
+                    if (data && data.loggedin) {
+                        console.log('joined chat');
+                        if (callback) callback(true);
+                    } else {
+                        console.log('error joining chat');
+                        if (callback) callback(false);
+                    }
+                },
+                fail: function() {
+                    console.log('error joining chat');
+                    if (callback) callback(false);
+                }
+            });
+        };
+
         var joinChat = function (username) {
             var tmpSocket = io();
 
@@ -39,7 +60,6 @@
             tmpSocket.on('disconnect', function() {
                 var socketId = socket.io.engine.id;
                 console.log('disconnected username: ' + username + ' socketId: ' + socketId);
-                tmpSocket = undefined;
                 currentSocket = undefined;
             });
         };
@@ -70,6 +90,16 @@
             } else {
                 console.log("error sending message to undefined socket");
             }
+        };
+
+        var registerForMessages = function(soc, callback) {
+            soc.on('chat', function(msg) {
+                var timestamp = msg.timestamp;
+                var username = msg.username;
+                var message = msg.message;
+
+                callback(timestamp, username, message);
+            });
         };
     </script>
 </body>
