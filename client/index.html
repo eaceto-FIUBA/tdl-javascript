@@ -31,7 +31,7 @@
             });
         };
 
-        var joinChat = function (username) {
+        var joinChat = function (username, callback) {
             var tmpSocket = io();
 
             tmpSocket.on('connect', function(){
@@ -47,12 +47,15 @@
                     success: function(data) {
                         if (data && data.username && data.socket) {
                             console.log('joined chat');
+                            if (callbak) callback(true);
                         } else {
                             console.log('error joining chat');
+                            if (callback) callback(false);
                         }
                     },
                     fail: function() {
                         console.log('error joining chat');
+                        if (callback) callback(false);
                     }
                 });
             });
