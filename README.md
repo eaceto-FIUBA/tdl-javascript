@@ -6,6 +6,9 @@
 
     PUT          /api/user/:username/login
 
+La respuesta será {"loggedin": (true|false}
+
+
 
 ### Crea un usuario en la sala de chat
 
