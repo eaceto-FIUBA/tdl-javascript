@@ -1,6 +1,11 @@
-# TDL Char
+# TDL Chat
 
 ## API
+
+### Login de un usuario
+
+    PUT          /api/user/:username/login
+
 
 ### Crea un usuario en la sala de chat
 
