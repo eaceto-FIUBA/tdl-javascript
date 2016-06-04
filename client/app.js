@@ -65,7 +65,7 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
       });
 
       tmpSocket.on('disconnect', function() {
-          var socketId = socket.io.engine.id;
+          var socketId = tmpSocket.io.engine.id;
           console.log('disconnected username: ' + username + ' socketId: ' + socketId);
           currentSocket = undefined;
       });
@@ -98,7 +98,12 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
 
   $scope.enterMsg = function(){
     if ($scope.msg=="/exit") {
-      $location.path( "/" );
+      $http.delete('/api/user/' + $routeParams.username + '/exit')
+          .then(function (response) {
+            $location.path( "/" );
+          }, function (response) {
+            $location.path( "/" );
+          });
     }
 
     var msg = { username: $routeParams.username, 
