@@ -104,6 +104,7 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
           }, function (response) {
             $location.path( "/" );
           });
+      return;
     }
 
     var msg = { username: $routeParams.username, 
