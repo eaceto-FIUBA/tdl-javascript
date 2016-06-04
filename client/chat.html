@@ -1,5 +1,4 @@
-<li ng-show="isConnected" class="chat page">
-  <div class="chatArea">
+<div ng-show="isConnected" class="">
     <ul class="messages">
     	<li ng-repeat="msg in messages" ng-class="{message: msg.username, log:!msg.username}"
  style="display: list-item;">
@@ -8,6 +7,5 @@
     		{{ msg.log }}
     	</li>
     </ul>
-  </div>
   <input autofocus class="inputMessage" placeholder="Mensaje..."  ng-model="msg" ng-keypress="($event.which === 13) ? enterMsg(msg) : 0"/>
-</li>
+</div>
