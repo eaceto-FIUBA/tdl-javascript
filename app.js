@@ -49,6 +49,8 @@ app.put('/api/user/:username/join/:socket', function(req, res) {
     if (socket) {
         socket.broadcast.emit('chat', {  log: "<"+username+"> ingreso al chat",
                                             timestamp: Date.now()});
+        messages.push({log: "<"+username+"> ingreso al chat",
+                                            timestamp: Date.now()});
     }
 
     res.json(e);
@@ -80,15 +82,23 @@ var io = require('socket.io').listen(app.listen(port, function() {
     })
 );
 
+var messages = [];
 io.on('connection', function(socket) {
     var sid = socket.id.replace("/","");
     sockets[sid] = socket;
+
+    messages.forEach(function (obj) {
+        socket.emit('chat', obj);
+    })
+
     socket.on('chat', function(msg) {
         var username = msg.username;
         var message = msg.message;
 
+        var toSend = {username: username, message: message, timestamp: Date.now()};
+        messages.push(toSend);
         console.log("[CHAT]\tfrom: '" + username + "' - message: '" + message + "'");
-        socket.broadcast.emit('chat', {username: username, message: message, timestamp: Date.now()});
+        socket.broadcast.emit('chat', toSend);
     });
 });
 

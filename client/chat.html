@@ -1,11 +1,19 @@
-<div ng-show="isConnected" class="">
-    <ul class="messages">
+    <ul class="messages" ng-show="isConnected">
     	<li ng-repeat="msg in messages" ng-class="{message: msg.username, log:!msg.username}"
  style="display: list-item;">
     		<span ng-show="msg.username" class="username" ng-class="" style="color: {{ getUsernameColor(msg.username) }};">{{ msg.username}}</span>
     		<span ng-show="msg.username" class="messageBody">{{ msg.message }}</span>
     		{{ msg.log }}
     	</li>
+    	<li style="display: list-item; height: 60px "></li>
     </ul>
   <input autofocus class="inputMessage" placeholder="Mensaje..."  ng-model="msg" ng-keypress="($event.which === 13) ? enterMsg(msg) : 0"/>
-</div>
+
+  <script type="text/javascript">
+  	$(document).ready(function(){
+  		console.log($('ul.messages li:last').offset().top);
+  		var wtf    = $('.messages');
+		var height = wtf[0].scrollHeight;
+  		wtf.scrollTop(height);
+  	})
+  </script>
