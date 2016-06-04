@@ -72,6 +72,15 @@ ul {
   width: 400px;
 }
 
+/* condition for screen size minimum of 500px */
+@media (max-width:500px) {
+
+  .login.page .form .usernameInput {
+    width: 100%;
+  }
+
+}
+
 .login.page .title {
   font-size: 200%;
 }

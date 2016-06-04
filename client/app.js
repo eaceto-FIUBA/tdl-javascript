@@ -39,7 +39,7 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
   $scope.isConnected = false;
   $scope.io = io();
   $scope.msg = "";
-  $scope.messages = [ {log:"Bienvenido al chat te Teoria del lenguaje"} ];
+  $scope.messages = [];
 
   var joinChat = function (tmpSocket, username, callback) {
       tmpSocket.on('connect', function(){
@@ -117,6 +117,7 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
         $location.path( "/" );
       }
       $scope.isConnected = loaded;
+      $scope.messages.push({log:"Bienvenido "+ $routeParams.username +" al chat te Teoria del lenguaje"});
     });
   };
   init();
