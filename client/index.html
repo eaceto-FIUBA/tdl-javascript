@@ -1,109 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>TDL Chat</title>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Socket.IO Chat Example</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-route.js"></script>
+  <script src="/app.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
-<body>
-    <script>
-        var currentSocket = undefined;
-
-        var login = function (username, callback) {
-            $.ajax({
-                url: '/api/user/' + username + '/login',
-                type: 'PUT',
-                dataType: "json",
-                success: function(data) {
-                    if (data && data.loggedin) {
-                        console.log('joined chat');
-                        if (callback) callback(true);
-                    } else {
-                        console.log('error joining chat');
-                        if (callback) callback(false);
-                    }
-                },
-                fail: function() {
-                    console.log('error joining chat');
-                    if (callback) callback(false);
-                }
-            });
-        };
-
-        var joinChat = function (username, callback) {
-            var tmpSocket = io();
-
-            tmpSocket.on('connect', function(){
-                currentSocket = tmpSocket;
-
-                var socketId = tmpSocket.io.engine.id;
-                console.log('connected username: ' + username + ' socketId: ' + socketId);
-                // call "join" endpoint
-                $.ajax({
-                    url: '/api/user/' + username + '/join/' + socketId,
-                    type: 'PUT',
-                    dataType: "json",
-                    success: function(data) {
-                        if (data && data.username && data.socket) {
-                            console.log('joined chat');
-                            if (callbak) callback(true);
-                        } else {
-                            console.log('error joining chat');
-                            if (callback) callback(false);
-                        }
-                    },
-                    fail: function() {
-                        console.log('error joining chat');
-                        if (callback) callback(false);
-                    }
-                });
-            });
-
-            tmpSocket.on('disconnect', function() {
-                var socketId = socket.io.engine.id;
-                console.log('disconnected username: ' + username + ' socketId: ' + socketId);
-                currentSocket = undefined;
-            });
-        };
-
-        var exitChat = function (username) {
-            // call "exit" endpoint
-            console.log('disconnecting username: ' + username);
-            $.ajax({
-                url: '/api/user/' + username + '/exit',
-                type: 'DELETE',
-                dataType: "json",
-                success: function(data) {
-                    console.log('left chat');
-                },
-                fail: function() {
-                    console.log('error leaving chat');
-                }
-            });
-        };
-
-        var sendMessage = function (soc, username, message) {
-            if (soc) {
-                soc.emit('chat', {
-                    "username": username,
-                    "socketid": soc.io.engine.id,
-                    "message": message
-                });
-            } else {
-                console.log("error sending message to undefined socket");
-            }
-        };
-
-        var registerForMessages = function(soc, callback) {
-            soc.on('chat', function(msg) {
-                var timestamp = msg.timestamp;
-                var username = msg.username;
-                var message = msg.message;
-
-                callback(timestamp, username, message);
-            });
-        };
-    </script>
+<body ng-app="inputBasicDemo">
+  <div ng-view>das</div>
 </body>
 </html>

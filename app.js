@@ -47,8 +47,7 @@ app.put('/api/user/:username/join/:socket', function(req, res) {
 
     var socket = sockets[socketid];
     if (socket) {
-        socket.to('others').emit('chat', {  username: username,
-                                            message: "<Ingresó al chat>",
+        socket.broadcast.emit('chat', {  log: "<"+username+"> ingreso al chat",
                                             timestamp: Date.now()});
     }
 
@@ -89,7 +88,7 @@ io.on('connection', function(socket) {
         var message = msg.message;
 
         console.log("[CHAT]\tfrom: '" + username + "' - message: '" + message + "'");
-        socket.to('others').emit('chat', {username: username, message: message, timestamp: Date.now()});
+        socket.broadcast.emit('chat', {username: username, message: message, timestamp: Date.now()});
     });
 });
 
