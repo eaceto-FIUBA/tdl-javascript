@@ -97,6 +97,10 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
   }
 
   $scope.enterMsg = function(){
+    if ($scope.msg=="/exit") {
+      $location.path( "/" );
+    }
+
     var msg = { username: $routeParams.username, 
                 message: $scope.msg, 
                 timestamp: Date.now(), 
@@ -117,3 +121,15 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
   };
   init();
 });
+
+
+app.directive('autofocus', ['$timeout', function($timeout) {
+  return {
+    restrict: 'A',
+    link : function($scope, $element) {
+      $timeout(function() {
+        $element[0].focus();
+      });
+    }
+  }
+}]);
