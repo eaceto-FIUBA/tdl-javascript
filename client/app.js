@@ -123,7 +123,7 @@ app.controller('ChatCtrl', function ChatCtrl($scope, $http, $routeParams, $locat
         $location.path( "/" );
       }
       $scope.isConnected = loaded;
-      $scope.messages.push({log:"Bienvenido "+ $routeParams.username +" al chat te Teoria del lenguaje"});
+      $scope.messages.push({log:"Bienvenido "+ $routeParams.username +" al chat de Teoria del lenguaje"});
     });
   };
   init();
